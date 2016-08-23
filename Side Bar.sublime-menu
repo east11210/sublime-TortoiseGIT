@@ -1,9 +1,12 @@
 [
-	{ "caption": "-" },
-	//{ "caption": "GIT Clone", "command": "git_clone", "args": {"paths":[]}},
-	{ "caption": "GIT Commit", "command": "git_commit", "args": {"paths":[]}},
-	{ "caption": "GIT Pull", "command": "git_pull", "args": {"paths":[]}},
-	{ "caption": "GIT Push", "command": "git_push", "args": {"paths":[]}},
-	{ "caption": "GIT Bash", "command": "git_bash", "args": {"paths":[]}},
-	{ "caption": "-", "id": "end" }
+    { "caption" : "TortoiseGit",
+      "children": [
+        { "caption": "Diff", "command": "git_diff", "args": {"paths":[]}},
+        { "caption": "Log", "command": "git_log", "args": {"paths":[]}},
+        { "caption": "Commit", "command": "git_commit", "args": {"paths":[]}},
+        { "caption": "Pull", "command": "git_pull", "args": {"paths":[]}},
+        { "caption": "Push", "command": "git_push", "args": {"paths":[]}},
+        { "caption": "Bash", "command": "git_bash", "args": {"paths":[]}},
+      ]
+    }
 ]

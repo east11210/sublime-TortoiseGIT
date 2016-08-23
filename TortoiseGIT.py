@@ -16,27 +16,40 @@ def current_dir(window):
         2) The directory containing the active file.
         3) The user's home directory.
     """
-    folders = window.folders()
-    if len(folders) == 1:
-        return folders[0]
+    active_view = window.active_view()
+    active_file_name = active_view.file_name() if active_view else None
+    if active_file_name:
+    	return active_file_name
     else:
-        active_view = window.active_view()
-        active_file_name = active_view.file_name() if active_view else None
-        if not active_file_name:
-            return folders[0] if len(folders) else os.path.expanduser("~")
-        for folder in folders:
-            if active_file_name.startswith(folder):
-                return folder
-        return os.path.dirname(active_file_name)
+    	folders = window.folders()
+    	if len(folders):
+    		return folders[0];
+
+
+def get_path(paths, window):
+	if paths:
+		return paths[0]
+	else:
+		return current_dir(window)
+
+
+def get_dir(paths, window):
+	dir = get_path(paths, window)
+	if not dir:
+		return
+	if os.path.isfile(dir):
+		dir = os.path.dirname(dir)
+	return dir;
 
 
 class TortoiseGITBashCommand(sublime_plugin.WindowCommand):
 	def run(self, paths=None, isHung=False):
-		dir = current_dir(self.window)
-
+		# dir = current_dir(self.window)
+		dir = get_dir(paths, self.window)
 		if not dir:
 			return
-			
+
+		# sublime.error_message(dir)
 		settings = sublime.load_settings('TortoiseGIT.sublime-settings')
 		gitbash_path = settings.get('gitbash_path')
 
@@ -45,27 +58,20 @@ class TortoiseGITBashCommand(sublime_plugin.WindowCommand):
 				' please config setting file', '\n   --sublime-TortoiseGIT']))
 			raise
 
-		command = 'cd %s & "%s" --login -i' % (dir, gitbash_path)
-		os.system(command)
-
-	def getPath(self, paths):
-		path = None
-		if paths:
-			path = '*'.join(paths)
-		else:
-			view = sublime.active_window().active_view()
-			path = view.file_name() if view else None
-
-		return path
+		proce = subprocess.Popen([gitbash_path], cwd=dir)
+		# subprocess.open(gitbash_path)
+		# command = 'cd %s & "%s" --login -i' % (dir, gitbash_path)
+		# os.system(command)
 
 
 class TortoiseGITCommand(sublime_plugin.WindowCommand):
 	def run(self, cmd, paths=None, isHung=False):
-		dir = current_dir(self.window)
+		dir = get_path(paths, self.window)
 
 		if not dir:
 			return
-			
+
+		sublime.error_message(dir)
 		settings = sublime.load_settings('TortoiseGIT.sublime-settings')
 		tortoisegit_path = settings.get('tortoisegit_path')
 
@@ -87,7 +93,7 @@ class TortoiseGITCommand(sublime_plugin.WindowCommand):
 class MutatingTortoiseGITCommand(TortoiseGITCommand):
 	def run(self, cmd, paths=None):
 		TortoiseGITCommand.run(self, cmd, paths, True)
-		
+
 		self.view = sublime.active_window().active_view()
 		row, col = self.view.rowcol(self.view.sel()[0].begin())
 		self.lastLine = str(row + 1);
@@ -112,23 +118,27 @@ class GitCommitCommand(TortoiseGITCommand):
 	def run(self, paths=None):
 		TortoiseGITCommand.run(self, 'commit /closeonend:3', paths)
 
+
 class GitCheckoutCommand(TortoiseGITCommand):
 	def run(self, paths=None):
 		TortoiseGITCommand.run(self, 'checkout /closeonend:3', paths)
+
 
 class GitPushCommand(TortoiseGITCommand):
 	def run(self, paths=None):
 		TortoiseGITCommand.run(self, 'push /closeonend:3', paths)
 
+
 class GitPullCommand(TortoiseGITCommand):
 	def run(self, paths=None):
 		TortoiseGITCommand.run(self, 'pull /closeonend:3', paths)
+
 
 class GitBashCommand(TortoiseGITBashCommand):
 	def run(self, paths=None):
 		TortoiseGITBashCommand.run(self, paths)
 
-"""
+
 class GitRevertCommand(MutatingTortoiseGITCommand):
 	def run(self, paths=None):
 		MutatingTortoiseGITCommand.run(self, 'revert', paths)
@@ -154,4 +164,4 @@ class GitBlameCommand(TortoiseGITCommand):
 	def is_visible(self, paths=None):
 		file = self.getPath(paths)
 		return os.path.isfile(file) if file else False
-"""
+

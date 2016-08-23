@@ -1,0 +1,10 @@
+[
+    { "caption" : "TortoiseGit",
+      "children": [
+        { "caption": "Diff", "command": "git_diff"},
+        { "caption": "Log", "command": "git_log"},
+        { "caption": "Commit", "command": "git_commit"},
+        { "caption": "Bash", "command": "git_bash"},
+      ]
+    }
+]
