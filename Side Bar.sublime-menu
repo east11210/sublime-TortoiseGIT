@@ -1,5 +1,5 @@
 [
-    { "caption" : "TortoiseGit",
+    { "id": "git", "caption" : "TortoiseGit",
       "children": [
         { "caption": "Diff", "command": "git_diff", "args": {"paths":[]}},
         { "caption": "Log", "command": "git_log", "args": {"paths":[]}},

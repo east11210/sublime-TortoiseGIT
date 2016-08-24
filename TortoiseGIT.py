@@ -67,11 +67,10 @@ class TortoiseGITBashCommand(sublime_plugin.WindowCommand):
 class TortoiseGITCommand(sublime_plugin.WindowCommand):
 	def run(self, cmd, paths=None, isHung=False):
 		dir = get_path(paths, self.window)
-
 		if not dir:
 			return
 
-		sublime.error_message(dir)
+		# sublime.error_message(dir)
 		settings = sublime.load_settings('TortoiseGIT.sublime-settings')
 		tortoisegit_path = settings.get('tortoisegit_path')
 
